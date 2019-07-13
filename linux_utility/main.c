@@ -6,8 +6,11 @@
 
 int main(int argc, char **argv)
 {
+#ifdef MY_TEST
     is_proc_run("pam");
     test1("lin_util");
-
+    test2();
+    test3();
+#endif
     return 0;
 }
