@@ -18,6 +18,20 @@ pid_t is_proc_run(char *proc_name);
  */
 int is_procs_run(char **procs);
 
+/**
+ * @brief is_kmodule_load
+ * @param kmod name of kernel module
+ * @return 0 if module load and -1 otherwise
+ */
+int is_kmodule_load(char *kmod);
+
+/**
+ * @brief is_kmodules_load
+ * @param kmod
+ * @return
+ */
+int is_kmodules_load(char **kmod);
+
 #ifdef MY_TEST
 
 typedef struct str_llist

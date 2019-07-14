@@ -161,6 +161,7 @@ int is_procs_run(char **procs)
     node* iter = head;
 
     while ((dir = readdir(procfs))) {
+
         cur_pid = strtol(dir->d_name, &end_ptr, 10);
         if (*end_ptr != '\0' || cur_pid < 0 || cur_pid == 0){ continue; }
         snprintf(buf, BUFF_SIZE, "/proc/%ld/stat", cur_pid);
@@ -171,7 +172,7 @@ int is_procs_run(char **procs)
             fclose(fp_stat);
             continue;
         }
-        if (!head) { return 0; }
+
         iter = head;
         while (iter) {
             if (strcmp(iter->str, buf)){
@@ -182,6 +183,8 @@ int is_procs_run(char **procs)
             break;
         }
         fclose(fp_stat);
+        //find all process
+        if (!head) { break; }
     }
 
     closedir(procfs);
@@ -193,5 +196,52 @@ int is_procs_run(char **procs)
     return -1;
 }
 
+int is_kmodule_load(char *kmod)
+{
+    if (!kmod){ return -1; }
 
+    FILE *fp_mod = fopen("/proc/modules", "r");
+    if (!fp_mod){ return -1; }
 
+    char buf[256];
+    ssize_t r = 0;
+
+    while ((r = fscanf(fp_mod,"%s%*[^\n]",buf)) != -1) {
+        if (!strcmp(buf, kmod)){
+            fclose(fp_mod);
+            return 0;
+        }
+    }
+    fclose(fp_mod);
+    return -1;
+}
+
+int is_kmodules_load(char **kmod)
+{
+    if (!kmod || !*kmod){ return -1; }
+    node* head = __create_str_llist(kmod);
+    node* iter = head;
+
+    FILE *fp_mod = fopen("/proc/modules", "r");
+    if (!fp_mod){ return -1; }
+
+    char kmod_name[256];
+    ssize_t r = 0;
+
+    while ((r = fscanf(fp_mod,"%s%*[^\n]",kmod_name)) != -1) {
+        iter = head;
+        while (iter) {
+            if (strcmp(iter->str, kmod_name)){
+                iter = iter->p_next;
+                continue;
+            }
+            __del_node_by_str(&head,iter->str);
+            break;
+        }
+        if (!head) { break; }
+    }
+    fclose(fp_mod);
+    if (head){ return -1; }
+
+    return 0;
+}

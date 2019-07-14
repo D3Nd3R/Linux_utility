@@ -71,5 +71,27 @@ void test4()
     char *proc3[] = {"vlc", "qtcreator", "sdfsdf", "sdf", NULL};
     res = is_procs_run(proc3);
     assert(res != 0);
+    printf("TEST 4 DONE\n");
+}
+
+void test5()
+{
+    assert(!is_kmodule_load("vboxdrv"));
+    assert(is_kmodule_load("sdfsfsdf"));
+    printf("TEST 5 DONE\n");
 }
 #endif //MY_TEST
+
+
+
+void test6()
+{
+    char *kmod1[] = {"ip_tables", "ip6_tables", "vboxnetadp",
+                     "edac_mce_amd", NULL};
+    assert(!is_kmodules_load(kmod1));
+
+    char *kmod2[] = {"ip_tables", "ip6_tables", "fsdfsdfdfs",
+                     "vboxnetadp", "edac_mce_amd", NULL};
+    assert(is_kmodules_load(kmod2));
+    printf("TEST 6 DONE\n");
+}
