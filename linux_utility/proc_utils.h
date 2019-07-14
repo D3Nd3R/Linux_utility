@@ -29,12 +29,12 @@ typedef struct str_llist
 
 typedef str_llist_t node;
 
-str_llist_t* create_str_llist(char **strs);
-node* push_node(node *head, char *str);
-void delete_std_llist(node **head);
-void print_llist(node *head);
-void del_node_by_str(node **head, char *str);
-node *find_node_str(node *head, char *str);
+str_llist_t* __create_str_llist(char **strs);
+node* __push_node(node *head, char *str);
+void __delete_std_llist(node **head);
+void __print_llist(node *head);
+void __del_node_by_str(node **head, char *str);
+node *__find_node_str(node *head, char *str);
 
 #endif //MY_TEST
 

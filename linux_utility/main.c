@@ -11,6 +11,7 @@ int main(int argc, char **argv)
     test1("lin_util");
     test2();
     test3();
+    test4();
 #endif
     return 0;
 }

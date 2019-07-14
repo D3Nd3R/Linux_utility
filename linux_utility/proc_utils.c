@@ -54,7 +54,7 @@ typedef struct str_llist
 typedef str_llist_t node;
 #endif //MY_TEST
 
-node* push_node(node *head, char *str)
+node* __push_node(node *head, char *str)
 {
     node *new = (node *) malloc(sizeof(node));
     new->str = strdup(str);
@@ -72,23 +72,23 @@ node* push_node(node *head, char *str)
     return head;
 }
 
-str_llist_t* create_str_llist(char **strs)
+str_llist_t* __create_str_llist(char **strs)
 {
     if (!strs || !*strs){ return NULL; }
 
     str_llist_t *head;
 
-    head = push_node(NULL, *strs);
+    head = __push_node(NULL, *strs);
     ++strs;
 
     while (*strs) {
-        push_node(head, *strs);
+        __push_node(head, *strs);
         ++strs;
     }
     return head;
 }
 
-node* find_node_str(node *head, char *str)
+node* __find_node_str(node *head, char *str)
 {
     if (!head || !str){ return NULL; }
     while (head) {
@@ -98,7 +98,7 @@ node* find_node_str(node *head, char *str)
 }
 
 
-void delete_std_llist(node **head)
+void __delete_std_llist(node **head)
 {
     if (!head || !*head){return;}
 
@@ -113,7 +113,8 @@ void delete_std_llist(node **head)
     *head = NULL;
 }
 
-void print_llist(node *head)
+#ifdef MY_TEST
+void __print_llist(node *head)
 {
     while (head) {
         printf("%s\n",head->str);
@@ -121,9 +122,10 @@ void print_llist(node *head)
     }
     printf("\n");
 }
+#endif //MY_TEST
 
 
-void del_node_by_str(node **head, char* str)
+void __del_node_by_str(node **head, char* str)
 {
     if (!head || !*head || !str){ return; }
 
@@ -146,7 +148,49 @@ void del_node_by_str(node **head, char* str)
 
 int is_procs_run(char **procs)
 {
-    return 0;
+    if (!procs || !*procs){ return -1; }
+
+    DIR* procfs;
+    if (!(procfs = opendir("/proc"))){ return -1; }
+
+    struct dirent *dir = NULL;
+    long cur_pid = -1;
+    char* end_ptr = NULL;
+    char buf[BUFF_SIZE];
+    node* head = __create_str_llist(procs);
+    node* iter = head;
+
+    while ((dir = readdir(procfs))) {
+        cur_pid = strtol(dir->d_name, &end_ptr, 10);
+        if (*end_ptr != '\0' || cur_pid < 0 || cur_pid == 0){ continue; }
+        snprintf(buf, BUFF_SIZE, "/proc/%ld/stat", cur_pid);
+
+        FILE *fp_stat = fopen(buf, "r");
+        if (!fp_stat){ continue; }
+        if ((fscanf(fp_stat,"%ld (%[^)])", &cur_pid, buf)) != 2){
+            fclose(fp_stat);
+            continue;
+        }
+        if (!head) { return 0; }
+        iter = head;
+        while (iter) {
+            if (strcmp(iter->str, buf)){
+                iter = iter->p_next;
+                continue;
+            }
+            __del_node_by_str(&head,iter->str);
+            break;
+        }
+        fclose(fp_stat);
+    }
+
+    closedir(procfs);
+    if (!head){
+        return 0;
+    }
+
+    __delete_std_llist(&head);
+    return -1;
 }
 
 
