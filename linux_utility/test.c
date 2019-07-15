@@ -29,6 +29,8 @@ void test2()
     printf("%s\n", "delete_std_llist(&head);");
     __print_llist(head);
 
+    __delete_std_llist(&head);
+
     printf("TEST 2 DONE\n");
 }
 
@@ -36,7 +38,7 @@ void test3()
 {
     char *strs[] = {"one", "two", "three", "four", "five", NULL};
 
-    str_llist_t *head = __create_str_llist(strs);
+    str_llist_t *head = (str_llist_t *)__create_str_llist(strs);
     assert(head);
     printf("%s\n", "str_llist_t *head = create_str_llist(strs)");
 
@@ -80,7 +82,7 @@ void test5()
     assert(is_kmodule_load("sdfsfsdf"));
     printf("TEST 5 DONE\n");
 }
-#endif //MY_TEST
+
 
 
 
@@ -95,3 +97,5 @@ void test6()
     assert(is_kmodules_load(kmod2));
     printf("TEST 6 DONE\n");
 }
+
+#endif //MY_TEST

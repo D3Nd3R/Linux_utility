@@ -133,7 +133,7 @@ void __del_node_by_str(node **head, char* str)
     prev = NULL;
 
     for (cur = *head; cur != NULL; prev = cur, cur = cur->p_next){
-        if(strcmp(cur->str,str)){ continue; }
+        if(!!strcmp(cur->str,str)){ continue; }
         if (prev == NULL) {
             *head = cur->p_next;
         }else {
@@ -141,6 +141,7 @@ void __del_node_by_str(node **head, char* str)
         }
         free(cur->str);
         free(cur);
+        break;
     }
 }
 
@@ -175,7 +176,7 @@ int is_procs_run(char **procs)
 
         iter = head;
         while (iter) {
-            if (strcmp(iter->str, buf)){
+            if (!!strcmp(iter->str, buf)){
                 iter = iter->p_next;
                 continue;
             }
@@ -231,7 +232,7 @@ int is_kmodules_load(char **kmod)
     while ((r = fscanf(fp_mod,"%s%*[^\n]",kmod_name)) != -1) {
         iter = head;
         while (iter) {
-            if (strcmp(iter->str, kmod_name)){
+            if (!!strcmp(iter->str, kmod_name)){
                 iter = iter->p_next;
                 continue;
             }
@@ -241,7 +242,10 @@ int is_kmodules_load(char **kmod)
         if (!head) { break; }
     }
     fclose(fp_mod);
-    if (head){ return -1; }
+    if (head){
+        __delete_std_llist(&head);
+        return -1;
+    }
 
     return 0;
 }
